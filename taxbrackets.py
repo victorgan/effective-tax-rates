@@ -6,8 +6,6 @@ from matplotlib import pyplot as plt
 import numpy as np
 import matplotlib as mpl
 
-print(mpl.__version__)
-
 def marginal_to_average(tax_structure, income):
     cumulative_bracket_max = 0
     total_tax = 0
@@ -98,11 +96,12 @@ avg_tax_alberta = marginal_to_average_list(marginal_tax_alberta, max_gross_incom
 avg_tax_usa = marginal_to_average_list(marginal_tax_usa, max_gross_income)
 avg_tax_cali = marginal_to_average_list(marginal_tax_cali, max_gross_income)
 
-min_gross_income = 10000
+min_gross_income = 00000
 income_range = range(min_gross_income, max_gross_income)
 
 plt.style.use('fivethirtyeight')
 tax_ontario = avg_tax_canada + avg_tax_ontario
+tax_alberta = avg_tax_canada + avg_tax_alberta
 tax_bc = avg_tax_canada + avg_tax_bc
 tax_cali = avg_tax_usa + avg_tax_cali
 
@@ -110,7 +109,7 @@ handle_on = plt.plot(income_range, tax_ontario[min_gross_income:max_gross_income
 handle_bc = plt.plot(income_range, tax_bc[min_gross_income:max_gross_income], label='British Columbia')
 handle_cali = plt.plot(income_range, tax_cali[min_gross_income:max_gross_income], label='California')
 handle_us = plt.plot(income_range, avg_tax_usa[min_gross_income:max_gross_income], label='Washington')
-# handle_ab = plt.plot(income_range, avg_tax_canada + avg_tax_alberta, label='Alberta')
+handle_ab = plt.plot(income_range, tax_alberta[min_gross_income:max_gross_income], label='Alberta')
 # handle_on = plt.plot(income_range, avg_tax_canada, label='Canada')
 plt.xlabel('Income ($)')
 plt.ylabel('Effective Tax Rate (%)')
