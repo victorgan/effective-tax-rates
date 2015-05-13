@@ -1,12 +1,13 @@
 """
-This shows an example of the "fivethirtyeight" styling, which
-tries to replicate the styles from FiveThirtyEight.com.
+Determining tax rates as a percentage of total income
 """
 from matplotlib import pyplot as plt
 import numpy as np
 import matplotlib as mpl
 
 def marginal_to_average(tax_structure, income):
+    """ Unused. Give an income tax tax structure, returns effective tax as a
+    percent of income"""
     cumulative_bracket_max = 0
     total_tax = 0
     residual_income = income
@@ -22,7 +23,8 @@ def marginal_to_average(tax_structure, income):
     return total_tax
 
 def marginal_tax(tax_structure, income):
-    """ Returns marginal tax rate given an income """
+    """ Returns current marginal tax rate. Eg marginal_tax(marginal_tax_canada,
+    45000) returns 0.26 """
     cumulative_bracket_max = 0
     residual_income = income
     for (bracket_max, tax_rate) in tax_structure:
@@ -33,17 +35,18 @@ def marginal_tax(tax_structure, income):
     print('Error: income higher than highest tax bracket')
     return -1
 
-def marginal_to_average_list(tax_structure, income):
-    marginal_taxes = [marginal_tax(tax_structure, i) for i in range(income)]
-    dollars = [ i+1 for i in range(income)]
+def marginal_to_average_list(tax_structure, max_gross_income):
+    """ average tax given an max_gross_income, for a range of incomes from 1 to
+    max_gross_income """
+    marginal_taxes = [marginal_tax(tax_structure, i) for i in range(max_gross_income)]
+    dollars = [ i+1 for i in range(max_gross_income)]
     average_tax = np.cumsum(marginal_taxes) / dollars
-    # average_tax = np.cumsum(marginal_taxes)
     return average_tax
-        
 
-
-max_gross_income = 300000
-
+# ==========================
+# Marginal Taxes.
+# ==========================
+max_gross_income = 300000 # Maximum income that a normal person would earn 
 marginal_tax_canada = [
     (44701, 15.0/100),
     (44700, 22.0/100),
@@ -128,31 +131,35 @@ marginal_tax_cali = [
     (max_gross_income, 12.3/100) 
     ]
 
-avg_tax_canada = marginal_to_average_list(marginal_tax_canada, max_gross_income)
-avg_tax_ontario = marginal_to_average_list(marginal_tax_ontario, max_gross_income)
-avg_tax_bc = marginal_to_average_list(marginal_tax_bc, max_gross_income)
-avg_tax_alberta = marginal_to_average_list(marginal_tax_alberta, max_gross_income)
+# ==========================
+# Calculate Effective Tax Rates for a range of incomes for each region
+# ==========================
+avg_tax_canada       = marginal_to_average_list(marginal_tax_canada, max_gross_income)
+avg_tax_ontario      = marginal_to_average_list(marginal_tax_ontario, max_gross_income)
+avg_tax_bc           = marginal_to_average_list(marginal_tax_bc, max_gross_income)
+avg_tax_alberta      = marginal_to_average_list(marginal_tax_alberta, max_gross_income)
 avg_tax_newfoundland = marginal_to_average_list(marginal_tax_newfoundland, max_gross_income)
-avg_tax_pei = marginal_to_average_list(marginal_tax_pei, max_gross_income)
-avg_tax_novascotia = marginal_to_average_list(marginal_tax_novascotia, max_gross_income)
+avg_tax_pei          = marginal_to_average_list(marginal_tax_pei, max_gross_income)
+avg_tax_novascotia   = marginal_to_average_list(marginal_tax_novascotia, max_gross_income)
 avg_tax_newbrunswick = marginal_to_average_list(marginal_tax_newbrunswick, max_gross_income)
 avg_tax_saskatchewan = marginal_to_average_list(marginal_tax_saskatchewan, max_gross_income)
-avg_tax_quebec = marginal_to_average_list(marginal_tax_quebec, max_gross_income)
-avg_tax_manitoba = marginal_to_average_list(marginal_tax_manitoba, max_gross_income)
+avg_tax_quebec       = marginal_to_average_list(marginal_tax_quebec, max_gross_income)
+avg_tax_manitoba     = marginal_to_average_list(marginal_tax_manitoba, max_gross_income)
+avg_tax_usa          = marginal_to_average_list(marginal_tax_usa, max_gross_income)
+avg_tax_cali         = marginal_to_average_list(marginal_tax_cali, max_gross_income)
 
-avg_tax_usa = marginal_to_average_list(marginal_tax_usa, max_gross_income)
-avg_tax_cali = marginal_to_average_list(marginal_tax_cali, max_gross_income)
-
-min_gross_income = 00000
-income_range = range(min_gross_income, max_gross_income)
-
-plt.style.use('fivethirtyeight')
-plt.style.use('bmh')
 tax_ontario = avg_tax_canada + avg_tax_ontario
 tax_alberta = avg_tax_canada + avg_tax_alberta
-tax_bc = avg_tax_canada + avg_tax_bc
-tax_cali = avg_tax_usa + avg_tax_cali
+tax_bc      = avg_tax_canada + avg_tax_bc
+tax_cali    = avg_tax_usa    + avg_tax_cali
 
+# ==========================
+# Plot Effective Tax Rates
+# ==========================
+min_gross_income = 00000
+income_range = range(min_gross_income, max_gross_income)
+plt.style.use('fivethirtyeight')
+plt.style.use('bmh')
 # handle_cali = plt.plot(income_range, tax_cali[min_gross_income:max_gross_income], label='California')
 # handle_us = plt.plot(income_range, avg_tax_usa[min_gross_income:max_gross_income], label='Washington')
 handle_bc = plt.plot(income_range, tax_bc[min_gross_income:max_gross_income], label='British Columbia')
@@ -166,8 +173,10 @@ handle_ab = plt.plot(income_range, avg_tax_canada + avg_tax_newbrunswick, label=
 handle_ab = plt.plot(income_range, avg_tax_canada + avg_tax_novascotia, label='Nova Scotia')
 handle_ab = plt.plot(income_range, avg_tax_canada + avg_tax_pei, label='PEI')
 # handle_on = plt.plot(income_range, avg_tax_canada, label='Canada')
+
 plt.xlabel('Income ($)')
 plt.ylabel('Effective Tax Rate (%)')
 # plt.ylabel('Tax ($)')
-plt.legend(loc=4)
+bottomright = 4
+plt.legend(loc = bottomright)
 plt.show()
